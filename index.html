@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101216">
+<title>ModelLab — 3D Texture Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#0d0f12;--panel:#171a20;--panel2:#20242c;--line:#2d333d;--muted:#9aa3b2;--text:#f3f5f8;--accent:#8ce0c1}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line);background:#111419;position:sticky;top:0;z-index:5}
+.brand{font-weight:800;letter-spacing:.08em}.brand span{color:var(--accent)}.tag{font-size:11px;color:var(--muted);border:1px solid var(--line);padding:5px 8px;border-radius:20px}
+main{max-width:1100px;margin:auto;padding:14px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(270px,.85fr);gap:14px}
+.viewer-wrap{min-width:0}.viewer{height:min(62vh,570px);min-height:330px;background:radial-gradient(ellipse at 50% 45%,#29313b,#14181e 70%);border:1px solid var(--line);border-radius:16px;overflow:hidden;position:relative;touch-action:pan-y}
+canvas{display:block;width:100%;height:100%}.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;pointer-events:none}
+.empty .cube{font-size:42px;margin-bottom:12px}.empty strong{font-size:18px}.empty p{color:var(--muted);max-width:300px;line-height:1.5;font-size:13px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px;min-width:0}
+h2{font-size:15px;margin:0 0 12px}.section{margin-bottom:17px}.section:last-child{margin-bottom:0}
+button,.filebtn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:11px 13px;border-radius:10px;font-weight:650;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+button.primary,.filebtn.primary{background:var(--accent);color:#102019;border-color:var(--accent)}button:disabled{opacity:.4;cursor:not-allowed}
+.filebtn input{display:none}.toolbar button{flex:1}.toolbar .primary{flex:1.3}
+input[type=file]{display:none}.muted{color:var(--muted);font-size:12px;line-height:1.5}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.row button{white-space:nowrap}
+.drop{border:1px dashed #47515f;border-radius:12px;padding:13px;text-align:center;color:var(--muted);font-size:12px;line-height:1.5}
+select{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:10px}
+.texture-list{display:flex;flex-direction:column;gap:8px;margin-top:9px}.texture-item{display:flex;align-items:center;gap:9px;background:var(--panel2);padding:8px;border-radius:10px;min-width:0}
+.texture-item img{width:42px;height:42px;object-fit:cover;border-radius:7px;background:#333}.texture-item .info{flex:1;min-width:0}.texture-item strong{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.texture-item small{color:var(--muted);font-size:10px}
+.status{font-size:12px;color:var(--muted);margin-top:9px;min-height:18px}.status.good{color:var(--accent)}.status.bad{color:#ff9b9b}
+footer{max-width:1100px;margin:0 auto;padding:0 14px 22px;color:var(--muted);font-size:11px;line-height:1.5}
+@media(max-width:760px){main{grid-template-columns:1fr;padding:10px}.viewer{height:48vh;min-height:290px}.panel{padding:13px}header{height:54px}.toolbar button{padding:10px 8px;font-size:12px}}
+</style>
+</head>
+<body>
+<header><div class="brand">MODEL<span>LAB</span></div><div class="tag">3D TEXTURE STUDIO</div></header>
+<main>
+<section class="viewer-wrap">
+  <div class="viewer" id="viewer">
+    <div class="empty" id="empty"><div class="cube">⬡</div><strong>Load a 3D model</strong><p>Choose a 3D model (GLB, GLTF, or OBJ). Photos are used as textures, not as 3D models.</p></div>
+  </div>
+  <div class="toolbar">
+    <label class="filebtn primary">＋ Load model<input id="modelFiles" type="file" accept=".glb,.gltf,.obj,.mtl,.bin,image/*" multiple></label>
+    <button id="resetView" disabled>↻ Reset view</button>
+    <button id="exportBtn" class="primary" disabled>⇩ Export GLB</button>
+  </div>
+  <div class="status" id="status">Ready — load a model to begin.</div>
+</section>
+<aside class="panel">
+  <div class="section">
+    <h2>Texture editor</h2>
+    <div class="drop">Add an image to replace the model's texture.<br>PNG, JPG, or WEBP</div>
+    <div class="row" style="margin-top:9px">
+      <label class="filebtn" style="flex:1">＋ Choose texture<input id="textureFile" type="file" accept="image/*"></label>
+      <button id="applyTexture" disabled>Apply</button>
+    </div>
+    <p class="muted">The selected image is applied to the model's materials. This is a simple whole-model replacement, not a UV painting tool.</p>
+  </div>
+  <div class="section">
+    <h2>Model textures</h2>
+    <div class="muted">Textures found inside the loaded model appear here. Download any texture separately.</div>
+    <div class="texture-list" id="textureList"><div class="muted">No model textures loaded yet.</div></div>
+  </div>
+  <div class="section">
+    <h2>Display</h2>
+    <select id="background">
+      <option value="dark">Dark background</option><option value="light">Light background</option><option value="grid">Grid background</option>
+    </select>
+  </div>
+</aside>
+</main>
+<footer>Runs in your browser. For best results use GLB/GLTF models with embedded textures. Export creates a GLB file. Large models may take a moment on phones.</footer>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/MTLLoader.js';
+import { GLTFExporter } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/exporters/GLTFExporter.js';
+
+const viewer=document.getElementById('viewer'), statusEl=document.getElementById('status');
+window.addEventListener('error',ev=>{if(statusEl) {statusEl.textContent='App error: '+(ev.message||'Could not start 3D viewer');statusEl.className='status bad';}});
+window.addEventListener('unhandledrejection',ev=>{if(statusEl){statusEl.textContent='Loading error: '+(ev.reason?.message||'Could not load file');statusEl.className='status bad';}});
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x171c23);
+const camera=new THREE.PerspectiveCamera(45,1,.01,10000); camera.position.set(3,2.2,4);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.outputColorSpace=THREE.SRGBColorSpace;
+viewer.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true;
+scene.add(new THREE.HemisphereLight(0xffffff,0x647080,2));
+const key=new THREE.DirectionalLight(0xffffff,2.2); key.position.set(4,6,5); scene.add(key);
+const fill=new THREE.DirectionalLight(0xffffff,.8); fill.position.set(-4,2,-3); scene.add(fill);
+const grid=new THREE.GridHelper(10,20,0x45505d,0x303945); grid.position.y=-1.1; scene.add(grid);
+let model=null, selectedTexture=null, originalMaterials=[], textureURLs=[], currentFiles=[];
+function say(msg,kind=''){statusEl.textContent=msg;statusEl.className='status '+kind}
+function resize(){const w=viewer.clientWidth,h=viewer.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
+new ResizeObserver(resize).observe(viewer); resize();
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)} animate();
+function frameModel(obj){
+ const box=new THREE.Box3().setFromObject(obj); const size=box.getSize(new THREE.Vector3()); const center=box.getCenter(new THREE.Vector3());
+ obj.position.sub(center); const max=Math.max(size.x,size.y,size.z)||1; camera.position.set(max*1.8,max*1.25,max*2.2); camera.near=max/1000;camera.far=max*100;camera.updateProjectionMatrix();controls.target.set(0,0,0);controls.update();
+}
+function disposeModel(){if(model){scene.remove(model);model.traverse(o=>{if(o.geometry)o.geometry.dispose()});}model=null;textureURLs.forEach(URL.revokeObjectURL);textureURLs=[]}
+function materialList(){const mats=[]; if(model)model.traverse(o=>{if(o.isMesh){const arr=Array.isArray(o.material)?o.material:[o.material];arr.forEach(m=>{if(m&&!mats.includes(m))mats.push(m)})}});return mats}
+function collectTextures(){
+ const list=document.getElementById('textureList');list.innerHTML='';let found=[];
+ materialList().forEach((m,mi)=>['map','normalMap','roughnessMap','metalnessMap','emissiveMap','aoMap','alphaMap','bumpMap','displacementMap'].forEach(slot=>{
+  const t=m[slot];if(t&&t.image&&!found.some(x=>x.texture===t))found.push({texture:t,slot,material:m.name||`Material ${mi+1}`});
+ }));
+ if(!found.length){list.innerHTML='<div class="muted">No downloadable image textures found.</div>';return}
+ found.forEach((item,i)=>{
+  const c=document.createElement('canvas');const im=item.texture.image;
+  try{c.width=im.videoWidth||im.naturalWidth||im.width;c.height=im.videoHeight||im.naturalHeight||im.height;const ctx=c.getContext('2d');ctx.drawImage(im,0,0,c.width,c.height);const data=c.toDataURL('image/png');
+   const el=document.createElement('div');el.className='texture-item';el.innerHTML=`<img src="${data}"><div class="info"><strong>${item.slot}</strong><small>${item.material} · ${c.width}×${c.height}</small></div><button>Download</button>`;
+   el.querySelector('button').addEventListener('click',()=>download(data,`texture-${i+1}.png`));list.appendChild(el);
+  }catch(e){const el=document.createElement('div');el.className='muted';el.textContent=`${item.slot}: browser could not read this texture`;list.appendChild(el)}
+ });
+}
+function download(url,name){const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove()}
+document.getElementById('modelFiles').addEventListener('change',async e=>{
+ const files=[...e.target.files];if(!files.length)return;currentFiles=files;disposeModel();say('Loading model…');
+ try{
+  const mainFile=files.find(f=>f.name.toLowerCase().endsWith('.glb')||f.name.toLowerCase().endsWith('.gltf')||f.name.toLowerCase().endsWith('.obj'));
+  if(!mainFile)throw Error('Choose a .glb, .gltf, or .obj model file.');
+  const manager=new THREE.LoadingManager();
+  const fileMap=new Map(files.map(f=>[f.name,URL.createObjectURL(f)]));textureURLs=[...fileMap.values()];
+  manager.setURLModifier(url=>{const clean=decodeURIComponent(url.split('/').pop().split('?')[0]);return fileMap.get(clean)||url});
+  let obj;
+  if(mainFile.name.toLowerCase().endsWith('.obj')){
+   const mtl=files.find(f=>f.name.toLowerCase().endsWith('.mtl'));
+   const loader=new OBJLoader(manager);
+   if(mtl){const ml=new MTLLoader(manager);const mats=ml.parse(await mtl.text(),'');mats.preload();loader.setMaterials(mats)}
+   obj=loader.parse(await mainFile.text());
+  }else{
+   const loader=new GLTFLoader(manager);
+   const url=fileMap.get(mainFile.name);
+   const gltf=await new Promise((resolve,reject)=>loader.load(url,resolve,undefined,reject));
+   obj=gltf.scene;
+  }
+  model=obj;scene.add(model);frameModel(model);document.getElementById('empty').style.display='none';
+  document.getElementById('exportBtn').disabled=false;document.getElementById('resetView').disabled=false;
+  document.getElementById('applyTexture').disabled=false;collectTextures();say(`Loaded ${mainFile.name}`,'good');
+  e.target.value='';
+ }catch(err){say('Could not load model: '+err.message,'bad');console.error(err)}
+});
+document.getElementById('textureFile').addEventListener('change',e=>{
+ const f=e.target.files&&e.target.files[0];if(!f)return;
+ if(!f.type.startsWith('image/')){say('Please choose an image file such as PNG, JPG, or WEBP.','bad');return;}
+ const url=URL.createObjectURL(f);
+ new THREE.TextureLoader().load(url,tex=>{
+   tex.colorSpace=THREE.SRGBColorSpace;
+   tex.wrapS=THREE.RepeatWrapping; tex.wrapT=THREE.RepeatWrapping;
+   tex.needsUpdate=true; selectedTexture=tex;
+   document.getElementById('applyTexture').disabled=!model;
+   say(`Texture ready: ${f.name}${model?' — press Apply to use it.':' — load a 3D model, then press Apply.'}`,'good');
+   URL.revokeObjectURL(url);
+ },undefined,()=>{say('Could not read that image. Try a JPG or PNG.','bad');URL.revokeObjectURL(url)});
+});
+document.getElementById('applyTexture').addEventListener('click',()=>{
+ if(!model||!selectedTexture)return;
+ let meshCount=0, generatedUVs=0;
+ model.traverse(o=>{
+   if(!o.isMesh||!o.geometry)return;
+   meshCount++;
+   const g=o.geometry;
+   // Some OBJ/custom models have no UV coordinates. Create a basic planar UV layout
+   // so the uploaded image does not sample a single pixel and appear black.
+   if(!g.attributes.uv){
+     g.computeBoundingBox();
+     const b=g.boundingBox, pos=g.attributes.position;
+     const sx=Math.max(b.max.x-b.min.x,1e-6), sy=Math.max(b.max.y-b.min.y,1e-6);
+     const uv=[];
+     for(let i=0;i<pos.count;i++){
+       uv.push((pos.getX(i)-b.min.x)/sx, (pos.getY(i)-b.min.y)/sy);
+     }
+     g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+     generatedUVs++;
+   }
+   const mats=Array.isArray(o.material)?o.material:[o.material];
+   mats.forEach(m=>{
+     if(!m)return;
+     // A dark base material multiplies the texture and can make it look black.
+     if(m.color && m.color.set) m.color.set(0xffffff);
+     m.map=selectedTexture;
+     m.needsUpdate=true;
+   });
+ });
+ selectedTexture.needsUpdate=true;
+ collectTextures();
+ if(!meshCount){say('No mesh geometry was found in this model.','bad');return;}
+ say(`Texture applied to ${meshCount} mesh(es).${generatedUVs?' Created basic UVs for '+generatedUVs+' mesh(es).':''}`,'good');
+});
+document.getElementById('resetView').addEventListener('click',()=>{if(model)frameModel(model)});
+document.getElementById('exportBtn').addEventListener('click',()=>{
+ if(!model)return;say('Preparing GLB export…');
+ const exporter=new GLTFExporter();
+ exporter.parse(model,result=>{
+  const blob=new Blob([result],{type:'model/gltf-binary'});const url=URL.createObjectURL(blob);download(url,'model-export.glb');setTimeout(()=>URL.revokeObjectURL(url),3000);say('Exported model-export.glb','good');
+ },err=>say('Export failed: '+err.message,'bad'),{binary:true,embedImages:true,maxTextureSize:4096});
+});
+document.getElementById('background').addEventListener('change',e=>{
+ const v=e.target.value;scene.background=new THREE.Color(v==='light'?0xdfe4e8:0x171c23);grid.visible=v==='grid';
+});
+</script>
+</body></html>
