@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111311">
+<title>Kukurin Codes</title>
+<style>
+:root{
+  --bg:#111311;--surface:#191c19;--surface2:#202420;--border:#303630;
+  --text:#f0f2ed;--muted:#9ba39a;--accent:#b7d77b;--accent-dark:#28351e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.page{max-width:880px;margin:0 auto;padding:0 24px 54px}
+.topbar{height:66px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.brand{font-size:13px;font-weight:800;letter-spacing:1.5px}
+.brand span{color:var(--accent)}
+.topnote{font-size:11px;color:var(--muted);letter-spacing:.4px}
+.hero{padding:56px 0 35px;max-width:620px}
+.kicker{font-size:11px;letter-spacing:2px;color:var(--accent);font-weight:800;text-transform:uppercase}
+h1{font-size:clamp(38px,8vw,64px);letter-spacing:-3px;line-height:.98;margin:14px 0 13px;font-weight:850}
+h1 span{color:var(--accent)}
+.intro{margin:0;color:var(--muted);font-size:15px;line-height:1.65;max-width:460px}
+.meta{display:flex;gap:9px;align-items:center;margin-top:23px;font-size:11px;color:var(--muted)}
+.pip{width:6px;height:6px;background:var(--accent);border-radius:50%}
+.toolbar{display:flex;gap:10px;margin:10px 0 34px}
+.searchwrap{position:relative;flex:1}
+.searchicon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#899187;font-size:16px;pointer-events:none}
+input{width:100%;height:46px;padding:0 15px 0 40px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none}
+input:focus{border-color:#879c65}
+.reset{height:46px;padding:0 15px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-size:13px}
+.reset:active,.copy:active{transform:translateY(1px)}
+.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 0 12px}
+.sectionhead h2{font-size:12px;letter-spacing:1.3px;text-transform:uppercase;margin:0;font-weight:800}
+.sectionhead p{font-size:11px;color:var(--muted);margin:0}
+.list{display:grid;gap:8px}
+.codecard{display:flex;align-items:center;gap:16px;padding:16px 17px;background:var(--surface);border:1px solid var(--border);border-radius:9px;min-height:82px}
+.codecard:hover{background:var(--surface2);border-color:#465044}
+.codeinfo{flex:1;min-width:0}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;font-weight:750;letter-spacing:.4px}
+.reward{font-size:12px;color:var(--muted);margin-top:5px}
+.label{display:inline-block;margin-top:8px;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#c7d0c0}
+.label:before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent);margin:0 6px 1px 0}
+.label.unverified:before{background:#c7a66b}
+.copy{min-width:91px;height:35px;border:1px solid #59684a;border-radius:6px;background:var(--accent-dark);color:#d8edb4;font-size:10px;font-weight:800;letter-spacing:.8px}
+.copy.done{background:#394b2b;color:#fff}
+.empty{display:none;padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:8px;font-size:13px}
+.howto{margin-top:36px;padding:22px;border:1px solid var(--border);border-radius:9px;background:#151815}
+.howto h2{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;margin:0 0 16px}
+.steps{display:grid;grid-template-columns:repeat(2,1fr);gap:13px 24px}
+.step{display:flex;gap:11px;align-items:flex-start;color:var(--muted);font-size:12px;line-height:1.5}
+.num{flex:0 0 22px;height:22px;border:1px solid #59684a;border-radius:50%;display:grid;place-items:center;color:var(--accent);font-size:10px;font-weight:800}
+.step strong{color:var(--text);font-weight:650}
+.warning{margin:15px 0 0;padding-top:13px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);line-height:1.6}
+footer{display:flex;justify-content:space-between;gap:15px;margin-top:26px;color:#727a70;font-size:10px}
+@media(max-width:560px){
+ .page{padding:0 16px 38px}.topbar{height:58px}.topnote{font-size:10px}
+ .hero{padding:43px 0 27px}h1{letter-spacing:-2px}
+ .toolbar{margin-bottom:28px}.sectionhead{align-items:flex-start;flex-direction:column;gap:5px}
+ .codecard{padding:14px 12px;gap:10px}.code{font-size:14px}.copy{min-width:76px;padding:0 8px}
+ .steps{grid-template-columns:1fr}.howto{padding:18px}
+ footer{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <nav class="topbar">
+    <div class="brand">KUKURIN <span> / CODES</span></div>
+    <div class="topnote">COMMUNITY CODE LIST</div>
+  </nav>
+
+  <header class="hero">
+    <div class="kicker">Roblox · Kukirin Life</div>
+    <h1>Free stuff.<br><span>Just codes.</span></h1>
+    <p class="intro">Een simpele lijst met codes voor Kukirin Life. Kopieer een code en probeer hem in de game.</p>
+    <div class="meta"><span class="pip"></span><span>Handmatig overzicht</span><span>·</span><span>November 2026</span></div>
+  </header>
+
+  <div class="toolbar">
+    <div class="searchwrap"><span class="searchicon">⌕</span><input id="search" type="search" placeholder="Zoek een code of beloning…" aria-label="Zoek codes"></div>
+    <button class="reset" id="reset" type="button">Reset</button>
+  </div>
+
+  <section>
+    <div class="sectionhead"><h2>Codes om eerst te proberen</h2><p>Gerapporteerd als actief</p></div>
+    <div class="list">
+      <article class="codecard" data-code="DEVBUGFIX"><div class="codeinfo"><div class="code">DEVBUGFIX</div><div class="reward">1.000 Cash</div><div class="label">Gerapporteerd actief</div></div><button class="copy" data-copy="DEVBUGFIX">KOPIEER</button></article>
+      <article class="codecard" data-code="TEST1NG"><div class="codeinfo"><div class="code">TEST1NG</div><div class="reward">750 Cash</div><div class="label">Gerapporteerd actief</div></div><button class="copy" data-copy="TEST1NG">KOPIEER</button></article>
+      <article class="codecard" data-code="CR4TE"><div class="codeinfo"><div class="code">CR4TE</div><div class="reward">1 Basic Crate</div><div class="label">Gerapporteerd actief</div></div><button class="copy" data-copy="CR4TE">KOPIEER</button></article>
+    </div>
+  </section>
+
+  <section style="margin-top:30px">
+    <div class="sectionhead"><h2>Meer codes</h2><p>Niet allemaal bevestigd</p></div>
+    <div class="list">
+      <article class="codecard" data-code="KUK1L1F3"><div class="codeinfo"><div class="code">KUK1L1F3</div><div class="reward">500 Cash</div><div class="label unverified">Mogelijk actief</div></div><button class="copy" data-copy="KUK1L1F3">KOPIEER</button></article>
+      <article class="codecard" data-code="MORECR4TE"><div class="codeinfo"><div class="code">MORECR4TE</div><div class="reward">1 Basic Crate</div><div class="label unverified">Mogelijk actief</div></div><button class="copy" data-copy="MORECR4TE">KOPIEER</button></article>
+      <article class="codecard" data-code="THR33CR4TE"><div class="codeinfo"><div class="code">THR33CR4TE</div><div class="reward">Gratis rewards · exacte beloning onbekend</div><div class="label unverified">Onbevestigd</div></div><button class="copy" data-copy="THR33CR4TE">KOPIEER</button></article>
+    </div>
+  </section>
+
+  <div class="empty" id="empty">Geen resultaten. Probeer een andere zoekterm.</div>
+
+  <section class="howto">
+    <h2>Codes inwisselen</h2>
+    <div class="steps">
+      <div class="step"><span class="num">1</span><span>Join de Roblox-groep <strong>Mukbang Lovers</strong>.</span></div>
+      <div class="step"><span class="num">2</span><span>Start <strong>Kukirin Life</strong> op Roblox.</span></div>
+      <div class="step"><span class="num">3</span><span>Open <strong>Menus → Settings → Codes</strong>.</span></div>
+      <div class="step"><span class="num">4</span><span>Plak de code en druk op <strong>Redeem</strong>.</span></div>
+    </div>
+    <p class="warning">Codes kunnen verlopen. Let op: de lijst is niet live gekoppeld aan de game. Vooral de codes onder “Meer codes” kunnen verouderd of onbevestigd zijn.</p>
+  </section>
+
+  <footer><span>Kukurin Codes · Fan-made page</span><span>Niet officieel verbonden aan Roblox.</span></footer>
+</main>
+<script>
+const search=document.getElementById('search');
+const cards=[...document.querySelectorAll('.codecard')];
+function filterCodes(){
+ const q=search.value.trim().toLowerCase();let count=0;
+ cards.forEach(card=>{
+   const match=(card.dataset.code+' '+card.innerText).toLowerCase().includes(q);
+   card.style.display=match?'flex':'none';if(match)count++;
+ });
+ document.getElementById('empty').style.display=count?'none':'block';
+}
+search.addEventListener('input',filterCodes);
+document.getElementById('reset').addEventListener('click',()=>{search.value='';filterCodes();search.focus();});
+document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{
+ const code=button.dataset.copy;
+ try{await navigator.clipboard.writeText(code);}
+ catch(e){const field=document.createElement('textarea');field.value=code;document.body.appendChild(field);field.select();document.execCommand('copy');field.remove();}
+ button.textContent='GEKOPIEERD';button.classList.add('done');
+ setTimeout(()=>{button.textContent='KOPIEER';button.classList.remove('done');},1400);
+}));
+</script>
+</body>
+</html>
